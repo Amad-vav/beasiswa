@@ -189,7 +189,7 @@ class AuthenticationTest extends TestCase
         $response->assertSee('Katalog Alternatif');
     }
 
-    public function test_non_premium_user_cannot_access_scholarships_catalog()
+    public function test_non_premium_user_sees_restricted_catalog_version()
     {
         $user = User::create([
             'nama_lengkap' => 'Andi Pratama',
@@ -203,8 +203,9 @@ class AuthenticationTest extends TestCase
         ]);
 
         $response = $this->actingAs($user)->get('/scholarships');
-        $response->assertRedirect('/premium');
-        $response->assertSessionHas('error');
+        $response->assertStatus(200);
+        $response->assertSee('versi terbatas');
+        $response->assertSee('Upgrade Premium');
     }
 
     public function test_user_can_access_premium_plan_page()
