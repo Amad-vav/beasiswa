@@ -252,13 +252,13 @@
                 <!-- Submit Button & Collapsible Methodology Note -->
                 <div class="pt-6 flex flex-col sm:flex-row sm:items-center sm:justify-between border-t border-zinc-800/40 gap-4 mt-6">
                     <div x-data="{ open: false }" class="flex-grow">
-                        <button type="button" @click="open = !open" class="flex items-center space-x-1.5 text-zinc-550 hover:text-zinc-400 text-xs font-semibold focus:outline-none transition-colors">
+                        <button type="button" @click="open = !open" class="flex items-center space-x-1.5 text-zinc-400 hover:text-zinc-300 text-xs font-semibold focus:outline-none transition-colors">
                             <span>ℹ️ Mengapa hanya 4 kriteria?</span>
                             <svg class="w-3.5 h-3.5 transition-transform duration-300" :class="open ? 'rotate-180' : ''" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
                             </svg>
                         </button>
-                        <div x-show="open" x-transition class="mt-3 text-zinc-500 text-[11px] leading-relaxed max-w-2xl text-left">
+                        <div x-show="open" x-transition class="mt-3 text-zinc-300 text-[11px] leading-relaxed max-w-2xl text-left font-medium">
                             ScholarMatch menggunakan 4 kriteria inti yang terbukti paling signifikan dalam proses seleksi beasiswa di Indonesia: IPK (bobot 30%), Kesesuaian Semester (25%), Penghasilan Orang Tua (25%), dan Status Akademik (20%). Metodologi ini mengacu pada pendekatan SAW (Simple Additive Weighting) yang divalidasi dalam penelitian sistem pendukung keputusan beasiswa.
                         </div>
                     </div>
@@ -275,34 +275,34 @@
         <!-- Horizontal Stepper (Inactive / Grayed Out before clicking) -->
         <div class="flex flex-col sm:flex-row items-center justify-between gap-4 max-w-4xl mx-auto py-6 mt-10 border-t border-zinc-800/40">
             <!-- Step 1 -->
-            <div class="flex-grow flex flex-col items-center text-center px-4 opacity-40 text-zinc-550">
-                <div class="w-12 h-12 rounded-full flex items-center justify-center text-lg border border-zinc-800 bg-zinc-950">
+            <div class="flex-grow flex flex-col items-center text-center px-4 opacity-60 text-zinc-400">
+                <div class="w-12 h-12 rounded-full flex items-center justify-center text-lg border border-zinc-700 bg-zinc-950">
                     🛡️
                 </div>
                 <span class="text-xs font-bold uppercase tracking-wider mt-3">Tahap 1: Filtering</span>
-                <span class="text-[10px] text-zinc-500 mt-1 block">Menyaring syarat IPK, Penghasilan, dan Batas Waktu</span>
+                <span class="text-[10px] text-zinc-300 mt-1 block font-medium">Menyaring syarat IPK, Penghasilan, dan Batas Waktu</span>
             </div>
 
-            <div class="hidden sm:block w-12 h-0.5 bg-zinc-850"></div>
+            <div class="hidden sm:block w-12 h-0.5 bg-zinc-800"></div>
 
             <!-- Step 2 -->
-            <div class="flex-grow flex flex-col items-center text-center px-4 opacity-40 text-zinc-550">
-                <div class="w-12 h-12 rounded-full flex items-center justify-center text-lg border border-zinc-800 bg-zinc-950">
+            <div class="flex-grow flex flex-col items-center text-center px-4 opacity-60 text-zinc-400">
+                <div class="w-12 h-12 rounded-full flex items-center justify-center text-lg border border-zinc-700 bg-zinc-950">
                     📈
                 </div>
                 <span class="text-xs font-bold uppercase tracking-wider mt-3">Tahap 2: Eligibility Score</span>
-                <span class="text-[10px] text-zinc-500 mt-1 block">Menghitung skor kelayakan IPK dan rasio pendapatan</span>
+                <span class="text-[10px] text-zinc-300 mt-1 block font-medium">Menghitung skor kelayakan IPK dan rasio pendapatan</span>
             </div>
 
-            <div class="hidden sm:block w-12 h-0.5 bg-zinc-850"></div>
+            <div class="hidden sm:block w-12 h-0.5 bg-zinc-800"></div>
 
             <!-- Step 3 -->
-            <div class="flex-grow flex flex-col items-center text-center px-4 opacity-40 text-zinc-550">
-                <div class="w-12 h-12 rounded-full flex items-center justify-center text-lg border border-zinc-800 bg-zinc-950">
+            <div class="flex-grow flex flex-col items-center text-center px-4 opacity-60 text-zinc-400">
+                <div class="w-12 h-12 rounded-full flex items-center justify-center text-lg border border-zinc-700 bg-zinc-950">
                     📊
                 </div>
                 <span class="text-xs font-bold uppercase tracking-wider mt-3">Tahap 3: SAW Ranking</span>
-                <span class="text-[10px] text-zinc-500 mt-1 block">Normalisasi matriks keputusan dan perangkingan SAW</span>
+                <span class="text-[10px] text-zinc-300 mt-1 block font-medium">Normalisasi matriks keputusan dan perangkingan SAW</span>
             </div>
         </div>
     </div>
@@ -324,12 +324,12 @@
             <!-- Animated Stepper -->
             <div class="flex flex-col sm:flex-row items-center justify-between gap-6 max-w-4xl mx-auto py-6">
                 <!-- Step 1 -->
-                <div class="flex-grow flex flex-col items-center text-center px-4 transition-all duration-500" :class="loadingStep >= 1 ? 'opacity-100' : 'opacity-30 text-zinc-550'">
-                    <div class="w-14 h-14 rounded-full flex items-center justify-center text-xl border-2 transition-all duration-500" :class="loadingStep >= 1 ? 'bg-emerald-500/10 border-emerald-500 text-emerald-400 shadow-lg shadow-emerald-500/10' : 'bg-zinc-950 border-zinc-800 text-zinc-550'">
+                <div class="flex-grow flex flex-col items-center text-center px-4 transition-all duration-500" :class="loadingStep >= 1 ? 'opacity-100' : 'opacity-50 text-zinc-450'">
+                    <div class="w-14 h-14 rounded-full flex items-center justify-center text-xl border-2 transition-all duration-500" :class="loadingStep >= 1 ? 'bg-emerald-500/10 border-emerald-500 text-emerald-400 shadow-lg shadow-emerald-500/10' : 'bg-zinc-950 border-zinc-800 text-zinc-450'">
                         🛡️
                     </div>
-                    <span class="text-xs font-bold uppercase tracking-wider mt-4" :class="loadingStep >= 1 ? 'text-emerald-400' : 'text-zinc-400'">Tahap 1: Filtering</span>
-                    <span x-show="loadingStep === 1" x-transition class="text-[10px] text-zinc-400 mt-2 block leading-normal">
+                    <span class="text-xs font-bold uppercase tracking-wider mt-4" :class="loadingStep >= 1 ? 'text-emerald-400' : 'text-zinc-300'">Tahap 1: Filtering</span>
+                    <span x-show="loadingStep === 1" x-transition class="text-[10px] text-zinc-200 mt-2 block leading-normal font-semibold">
                         Menyaring beasiswa berdasarkan IPK, Penghasilan Orang Tua, dan batas waktu pendaftaran...
                     </span>
                 </div>
@@ -337,12 +337,12 @@
                 <div class="hidden sm:block w-16 h-0.5 transition-all duration-500" :class="loadingStep >= 2 ? 'bg-emerald-500/80' : 'bg-zinc-800'"></div>
 
                 <!-- Step 2 -->
-                <div class="flex-grow flex flex-col items-center text-center px-4 transition-all duration-500" :class="loadingStep >= 2 ? 'opacity-100' : 'opacity-30 text-zinc-550'">
-                    <div class="w-14 h-14 rounded-full flex items-center justify-center text-xl border-2 transition-all duration-500" :class="loadingStep >= 2 ? 'bg-blue-500/10 border-blue-500 text-blue-400 shadow-lg shadow-blue-500/10' : 'bg-zinc-950 border-zinc-800 text-zinc-550'">
+                <div class="flex-grow flex flex-col items-center text-center px-4 transition-all duration-500" :class="loadingStep >= 2 ? 'opacity-100' : 'opacity-50 text-zinc-450'">
+                    <div class="w-14 h-14 rounded-full flex items-center justify-center text-xl border-2 transition-all duration-500" :class="loadingStep >= 2 ? 'bg-blue-500/10 border-blue-500 text-blue-400 shadow-lg shadow-blue-500/10' : 'bg-zinc-950 border-zinc-800 text-zinc-450'">
                         📈
                     </div>
-                    <span class="text-xs font-bold uppercase tracking-wider mt-4" :class="loadingStep >= 2 ? 'text-blue-400' : 'text-zinc-400'">Tahap 2: Eligibility Score</span>
-                    <span x-show="loadingStep === 2" x-transition class="text-[10px] text-zinc-400 mt-2 block leading-normal">
+                    <span class="text-xs font-bold uppercase tracking-wider mt-4" :class="loadingStep >= 2 ? 'text-blue-400' : 'text-zinc-300'">Tahap 2: Eligibility Score</span>
+                    <span x-show="loadingStep === 2" x-transition class="text-[10px] text-zinc-200 mt-2 block leading-normal font-semibold">
                         Mengonversi data akademik menjadi skor kelayakan (skala 1-5) kriteria C1 - C4...
                     </span>
                 </div>
@@ -350,12 +350,12 @@
                 <div class="hidden sm:block w-16 h-0.5 transition-all duration-500" :class="loadingStep >= 3 ? 'bg-blue-500/80' : 'bg-zinc-800'"></div>
 
                 <!-- Step 3 -->
-                <div class="flex-grow flex flex-col items-center text-center px-4 transition-all duration-500" :class="loadingStep >= 3 ? 'opacity-100' : 'opacity-30 text-zinc-550'">
-                    <div class="w-14 h-14 rounded-full flex items-center justify-center text-xl border-2 transition-all duration-500" :class="loadingStep >= 3 ? 'bg-purple-500/10 border-purple-500 text-purple-400 shadow-lg shadow-purple-500/10' : 'bg-zinc-950 border-zinc-800 text-zinc-550'">
+                <div class="flex-grow flex flex-col items-center text-center px-4 transition-all duration-500" :class="loadingStep >= 3 ? 'opacity-100' : 'opacity-50 text-zinc-450'">
+                    <div class="w-14 h-14 rounded-full flex items-center justify-center text-xl border-2 transition-all duration-500" :class="loadingStep >= 3 ? 'bg-purple-500/10 border-purple-500 text-purple-400 shadow-lg shadow-purple-500/10' : 'bg-zinc-950 border-zinc-800 text-zinc-450'">
                         📊
                     </div>
-                    <span class="text-xs font-bold uppercase tracking-wider mt-4" :class="loadingStep >= 3 ? 'text-purple-400' : 'text-zinc-400'">Tahap 3: SAW Ranking</span>
-                    <span x-show="loadingStep === 3" x-transition class="text-[10px] text-zinc-400 mt-2 block leading-normal">
+                    <span class="text-xs font-bold uppercase tracking-wider mt-4" :class="loadingStep >= 3 ? 'text-purple-400' : 'text-zinc-300'">Tahap 3: SAW Ranking</span>
+                    <span x-show="loadingStep === 3" x-transition class="text-[10px] text-zinc-200 mt-2 block leading-normal font-semibold">
                         Normalisasi matriks dan penghitungan preferensi akhir Simple Additive Weighting...
                     </span>
                 </div>
