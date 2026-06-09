@@ -22,7 +22,7 @@ class DatabaseSeeder extends Seeder
         // Seed Default Settings
         \App\Models\Setting::create([
             'key' => 'premium_price',
-            'value' => '150000'
+            'value' => '300000'
         ]);
 
         \App\Models\Setting::create([

@@ -60,7 +60,12 @@
     <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-zinc-800 pb-6 gap-4">
         <div>
             <h1 class="font-title font-black text-3xl text-white">Panel Administrasi Beasiswa</h1>
-            <p class="text-zinc-500 text-xs mt-1">Kelola katalog beasiswa, log statistik klik mahasiswa, dan konfigurasi bobot kriteria SPK.</p>
+            <p class="text-zinc-500 text-xs mt-1 flex flex-col sm:flex-row sm:items-center gap-x-2 gap-y-1">
+                <span>Kelola katalog beasiswa, log statistik klik mahasiswa, dan konfigurasi bobot kriteria SPK.</span>
+                <span class="text-red-400 font-semibold bg-red-500/10 border border-red-500/20 px-2 py-0.5 rounded text-[10px] w-max">
+                    ℹ️ Beasiswa kedaluwarsa otomatis dikecualikan dari hasil pencocokan.
+                </span>
+            </p>
         </div>
         <button @click="showAddModal = true" class="px-5 py-2.5 bg-gradient-to-r from-emerald-500 to-blue-600 hover:from-emerald-400 hover:to-blue-500 text-zinc-950 font-bold rounded-xl text-xs transition-all flex items-center space-x-2">
             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" /></svg>
@@ -89,13 +94,21 @@
                         </thead>
                         <tbody>
                             @foreach($scholarships as $sch)
-                                <tr class="border-b border-zinc-800/30 hover:bg-zinc-800/10 transition-colors">
+                                @php
+                                    $isExpired = $sch->batas_waktu && $sch->batas_waktu->isPast();
+                                @endphp
+                                <tr class="border-b border-zinc-800/30 hover:bg-zinc-800/10 transition-colors {{ $isExpired ? 'opacity-55' : '' }}">
                                     <td class="py-3 px-2">
-                                        <div class="font-semibold text-zinc-100 flex items-center space-x-1.5">
+                                        <div class="font-semibold text-zinc-100 flex items-center space-x-1.5 flex-wrap gap-y-1">
                                             @if($sch->is_featured)
                                                 <span class="w-2 h-2 rounded-full bg-amber-400" title="Unggulan / Sponsor"></span>
                                             @endif
                                             <span>{{ $sch->nama_beasiswa }}</span>
+                                            @if($isExpired)
+                                                <span class="px-1.5 py-0.5 rounded text-[8px] font-extrabold uppercase tracking-wider bg-red-500/10 border border-red-500/20 text-red-400">
+                                                    KEDALUWARSA
+                                                </span>
+                                            @endif
                                         </div>
                                         <div class="text-[10px] text-zinc-500 mt-0.5">{{ $sch->penyelenggara }}</div>
                                     </td>

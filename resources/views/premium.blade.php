@@ -72,9 +72,15 @@
             <div>
                 <span class="text-[10px] font-bold text-amber-400 uppercase tracking-widest block mb-2">FULL PASS ACCESS</span>
                 <h3 class="font-title font-black text-2xl text-white mb-1">Premium Plan</h3>
-                <p class="text-zinc-400 text-xs mb-6">Membuka seluruh potensi rekomendasi beasiswa Anda.</p>
-                <div class="font-title font-black text-3xl text-amber-400 mb-6">
-                    Rp {{ number_format($premiumPrice, 0, ',', '.') }} <span class="text-xs font-semibold text-zinc-500">/ selamanya</span>
+                <p class="text-zinc-400 text-xs mb-4">Membuka seluruh potensi rekomendasi beasiswa Anda.</p>
+                <div class="text-[10px] font-bold text-amber-400 flex items-center gap-1 mb-2 bg-amber-500/10 border border-amber-500/25 px-2.5 py-1 rounded-lg w-max">
+                    🔥 Terbatas untuk 100 pengguna pertama
+                </div>
+                <div class="text-xs text-zinc-500 font-semibold mb-1 tracking-wide">
+                    <s>Rp 750.000</s> → Rp 300.000
+                </div>
+                <div class="font-title font-black text-2xl text-amber-400 mb-6 leading-normal">
+                    Rp 300.000 — Akses Seumur Hidup (Harga Early Adopter)
                 </div>
 
                 <ul class="space-y-4 text-xs text-zinc-300 mb-8 border-t border-zinc-800/80 pt-6">
@@ -115,6 +121,13 @@
                     </p>
                 </div>
             @endif
+            <div class="mt-4 border-t border-zinc-800/80 pt-4 flex flex-col sm:flex-row items-center justify-center gap-x-4 gap-y-1 text-[10px] text-zinc-400 font-medium text-center">
+                <span>✓ Tidak ada biaya berulang</span>
+                <span class="hidden sm:inline text-zinc-700">•</span>
+                <span>✓ Akses permanen</span>
+                <span class="hidden sm:inline text-zinc-700">•</span>
+                <span>✓ Garansi relevansi SPK</span>
+            </div>
         </div>
     </div>
 </div>

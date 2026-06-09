@@ -18,6 +18,7 @@
     showResults: false,
     activeTab: 'eligible', // 'eligible' or 'ineligible'
     showMathModal: false,
+    loadingStep: 0,
 
     // API Response data
     user: {},
@@ -50,6 +51,7 @@
         this.showForm = false;
         this.isLoading = true;
         this.showResults = false;
+        this.loadingStep = 0;
         this.recommendations = [];
         this.ineligible = [];
 
@@ -79,26 +81,35 @@
                 this.allIneligible = data.ineligible;
                 this.premiumScholarships = data.premium_scholarships;
 
-                // 1.5 seconds loading state
+                // Animate steps sequentially
+                this.loadingStep = 1;
+                
                 setTimeout(() => {
-                    this.isLoading = false;
-                    this.showResults = true;
-
-                    // Staggered fade-in for recommendations
-                    this.allRecommendations.forEach((rec, index) => {
+                    this.loadingStep = 2;
+                    
+                    setTimeout(() => {
+                        this.loadingStep = 3;
+                        
                         setTimeout(() => {
-                            this.recommendations.push(rec);
-                        }, index * 150);
-                    });
+                            this.isLoading = false;
+                            this.showResults = true;
 
-                    // Staggered fade-in for disqualified
-                    this.allIneligible.forEach((sch, index) => {
-                        setTimeout(() => {
-                            this.ineligible.push(sch);
-                        }, index * 150 + 100);
-                    });
+                            // Staggered fade-in for recommendations
+                            this.allRecommendations.forEach((rec, index) => {
+                                setTimeout(() => {
+                                    this.recommendations.push(rec);
+                                }, index * 150);
+                            });
 
-                }, 1500);
+                            // Staggered fade-in for disqualified
+                            this.allIneligible.forEach((sch, index) => {
+                                setTimeout(() => {
+                                    this.ineligible.push(sch);
+                                }, index * 150 + 100);
+                            });
+                        }, 800);
+                    }, 800);
+                }, 800);
             } else {
                 alert('Gagal memproses matchmaking. Pastikan data valid.');
                 this.isLoading = false;
@@ -238,9 +249,21 @@
                     </div>
                 </div>
 
-                <!-- Submit Button -->
-                <div class="pt-6 flex justify-end">
-                    <button type="submit" class="relative inline-flex items-center justify-center p-0.5 overflow-hidden text-sm font-bold text-white rounded-2xl group bg-gradient-to-br from-emerald-500 via-emerald-400 to-blue-600 w-full sm:w-auto shadow-xl shadow-emerald-500/10 hover:shadow-emerald-500/25 transition-all duration-300">
+                <!-- Submit Button & Collapsible Methodology Note -->
+                <div class="pt-6 flex flex-col sm:flex-row sm:items-center sm:justify-between border-t border-zinc-800/40 gap-4 mt-6">
+                    <div x-data="{ open: false }" class="flex-grow">
+                        <button type="button" @click="open = !open" class="flex items-center space-x-1.5 text-zinc-550 hover:text-zinc-400 text-xs font-semibold focus:outline-none transition-colors">
+                            <span>ℹ️ Mengapa hanya 4 kriteria?</span>
+                            <svg class="w-3.5 h-3.5 transition-transform duration-300" :class="open ? 'rotate-180' : ''" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </button>
+                        <div x-show="open" x-transition class="mt-3 text-zinc-500 text-[11px] leading-relaxed max-w-2xl text-left">
+                            ScholarMatch menggunakan 4 kriteria inti yang terbukti paling signifikan dalam proses seleksi beasiswa di Indonesia: IPK (bobot 30%), Kesesuaian Semester (25%), Penghasilan Orang Tua (25%), dan Status Akademik (20%). Metodologi ini mengacu pada pendekatan SAW (Simple Additive Weighting) yang divalidasi dalam penelitian sistem pendukung keputusan beasiswa.
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="relative inline-flex items-center justify-center p-0.5 overflow-hidden text-sm font-bold text-white rounded-2xl group bg-gradient-to-br from-emerald-500 via-emerald-400 to-blue-600 w-full sm:w-auto shrink-0 shadow-xl shadow-emerald-500/10 hover:shadow-emerald-500/25 transition-all duration-300">
                         <span class="relative px-8 py-3.5 transition-all ease-in duration-75 bg-zinc-900 rounded-[14px] group-hover:bg-opacity-0 w-full text-center">
                             Mulai Pencocokan
                         </span>
@@ -249,90 +272,102 @@
             </form>
         </div>
 
-        <!-- 3-Step SPK Cards Illustration -->
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mt-10">
-            <div class="p-5 bg-zinc-900/30 border border-zinc-800/60 rounded-2xl flex items-center space-x-4">
-                <div class="w-10 h-10 rounded-lg bg-emerald-500/10 border border-emerald-500/25 flex items-center justify-center text-emerald-400">
-                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
+        <!-- Horizontal Stepper (Inactive / Grayed Out before clicking) -->
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-4 max-w-4xl mx-auto py-6 mt-10 border-t border-zinc-800/40">
+            <!-- Step 1 -->
+            <div class="flex-grow flex flex-col items-center text-center px-4 opacity-40 text-zinc-550">
+                <div class="w-12 h-12 rounded-full flex items-center justify-center text-lg border border-zinc-800 bg-zinc-950">
+                    🛡️
                 </div>
-                <div>
-                    <h4 class="text-[10px] text-zinc-500 font-bold uppercase tracking-wider">Tahap 1: Filtering Stage</h4>
-                    <p class="text-xs font-semibold text-zinc-300">Eliminasi IPK, Pendapatan & Deadline</p>
-                </div>
+                <span class="text-xs font-bold uppercase tracking-wider mt-3">Tahap 1: Filtering</span>
+                <span class="text-[10px] text-zinc-500 mt-1 block">Menyaring syarat IPK, Penghasilan, dan Batas Waktu</span>
             </div>
-            <div class="p-5 bg-zinc-900/30 border border-zinc-800/60 rounded-2xl flex items-center space-x-4">
-                <div class="w-10 h-10 rounded-lg bg-blue-500/10 border border-blue-500/25 flex items-center justify-center text-blue-400">
-                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>
+
+            <div class="hidden sm:block w-12 h-0.5 bg-zinc-850"></div>
+
+            <!-- Step 2 -->
+            <div class="flex-grow flex flex-col items-center text-center px-4 opacity-40 text-zinc-550">
+                <div class="w-12 h-12 rounded-full flex items-center justify-center text-lg border border-zinc-800 bg-zinc-950">
+                    📈
                 </div>
-                <div>
-                    <h4 class="text-[10px] text-zinc-500 font-bold uppercase tracking-wider">Tahap 2: Eligibility Score</h4>
-                    <p class="text-xs font-semibold text-zinc-300">Konversi Surplus IPK & Rasio Penghasilan</p>
-                </div>
+                <span class="text-xs font-bold uppercase tracking-wider mt-3">Tahap 2: Eligibility Score</span>
+                <span class="text-[10px] text-zinc-500 mt-1 block">Menghitung skor kelayakan IPK dan rasio pendapatan</span>
             </div>
-            <div class="p-5 bg-zinc-900/30 border border-zinc-800/60 rounded-2xl flex items-center space-x-4">
-                <div class="w-10 h-10 rounded-lg bg-purple-500/10 border border-purple-500/25 flex items-center justify-center text-purple-400">
-                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
+
+            <div class="hidden sm:block w-12 h-0.5 bg-zinc-850"></div>
+
+            <!-- Step 3 -->
+            <div class="flex-grow flex flex-col items-center text-center px-4 opacity-40 text-zinc-550">
+                <div class="w-12 h-12 rounded-full flex items-center justify-center text-lg border border-zinc-800 bg-zinc-950">
+                    📊
                 </div>
-                <div>
-                    <h4 class="text-[10px] text-zinc-500 font-bold uppercase tracking-wider">Tahap 3: SAW Calculation</h4>
-                    <p class="text-xs font-semibold text-zinc-300">Penjumlahan Terbobot & Perangkingan</p>
-                </div>
+                <span class="text-xs font-bold uppercase tracking-wider mt-3">Tahap 3: SAW Ranking</span>
+                <span class="text-[10px] text-zinc-500 mt-1 block">Normalisasi matriks keputusan dan perangkingan SAW</span>
             </div>
         </div>
     </div>
 
 
-    <!-- ==================== 2. LOADING STATE (SKELETONS) ==================== -->
+    <!-- ==================== 2. LOADING STATE (STEPPER) ==================== -->
     <div x-show="isLoading" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" class="space-y-8">
-        <!-- Title Skeleton -->
-        <div class="text-center mb-10 animate-pulse">
-            <div class="h-10 bg-zinc-800 w-3/4 mx-auto rounded-xl mb-3"></div>
-            <div class="h-4 bg-zinc-800 w-1/2 mx-auto rounded-lg"></div>
+        <!-- Stepper Header -->
+        <div class="text-center mb-10">
+            <h1 class="font-title font-black text-3xl sm:text-4xl tracking-tight text-white mb-2">
+                Memproses Pencocokan Beasiswa
+            </h1>
+            <p class="text-zinc-400 max-w-xl mx-auto text-sm">
+                Sistem sedang menjalankan perhitungan Two-Stage Decision Engine secara berurutan...
+            </p>
         </div>
 
-        <div class="bg-zinc-900/40 border border-zinc-800 rounded-3xl p-8 sm:p-10 shadow-2xl space-y-6">
-            <div class="flex items-center space-x-4 animate-pulse">
-                <div class="w-12 h-12 rounded-xl bg-zinc-800"></div>
-                <div class="space-y-2 flex-1">
-                    <div class="h-5 bg-zinc-800 rounded w-1/3"></div>
-                    <div class="h-3 bg-zinc-800 rounded w-1/4"></div>
+        <div class="bg-zinc-900/60 backdrop-blur-xl border border-zinc-800/80 rounded-3xl p-8 sm:p-10 shadow-2xl space-y-8">
+            <!-- Animated Stepper -->
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-6 max-w-4xl mx-auto py-6">
+                <!-- Step 1 -->
+                <div class="flex-grow flex flex-col items-center text-center px-4 transition-all duration-500" :class="loadingStep >= 1 ? 'opacity-100' : 'opacity-30 text-zinc-550'">
+                    <div class="w-14 h-14 rounded-full flex items-center justify-center text-xl border-2 transition-all duration-500" :class="loadingStep >= 1 ? 'bg-emerald-500/10 border-emerald-500 text-emerald-400 shadow-lg shadow-emerald-500/10' : 'bg-zinc-950 border-zinc-800 text-zinc-550'">
+                        🛡️
+                    </div>
+                    <span class="text-xs font-bold uppercase tracking-wider mt-4" :class="loadingStep >= 1 ? 'text-emerald-400' : 'text-zinc-400'">Tahap 1: Filtering</span>
+                    <span x-show="loadingStep === 1" x-transition class="text-[10px] text-zinc-400 mt-2 block leading-normal">
+                        Menyaring beasiswa berdasarkan IPK, Penghasilan Orang Tua, dan batas waktu pendaftaran...
+                    </span>
+                </div>
+
+                <div class="hidden sm:block w-16 h-0.5 transition-all duration-500" :class="loadingStep >= 2 ? 'bg-emerald-500/80' : 'bg-zinc-800'"></div>
+
+                <!-- Step 2 -->
+                <div class="flex-grow flex flex-col items-center text-center px-4 transition-all duration-500" :class="loadingStep >= 2 ? 'opacity-100' : 'opacity-30 text-zinc-550'">
+                    <div class="w-14 h-14 rounded-full flex items-center justify-center text-xl border-2 transition-all duration-500" :class="loadingStep >= 2 ? 'bg-blue-500/10 border-blue-500 text-blue-400 shadow-lg shadow-blue-500/10' : 'bg-zinc-950 border-zinc-800 text-zinc-550'">
+                        📈
+                    </div>
+                    <span class="text-xs font-bold uppercase tracking-wider mt-4" :class="loadingStep >= 2 ? 'text-blue-400' : 'text-zinc-400'">Tahap 2: Eligibility Score</span>
+                    <span x-show="loadingStep === 2" x-transition class="text-[10px] text-zinc-400 mt-2 block leading-normal">
+                        Mengonversi data akademik menjadi skor kelayakan (skala 1-5) kriteria C1 - C4...
+                    </span>
+                </div>
+
+                <div class="hidden sm:block w-16 h-0.5 transition-all duration-500" :class="loadingStep >= 3 ? 'bg-blue-500/80' : 'bg-zinc-800'"></div>
+
+                <!-- Step 3 -->
+                <div class="flex-grow flex flex-col items-center text-center px-4 transition-all duration-500" :class="loadingStep >= 3 ? 'opacity-100' : 'opacity-30 text-zinc-550'">
+                    <div class="w-14 h-14 rounded-full flex items-center justify-center text-xl border-2 transition-all duration-500" :class="loadingStep >= 3 ? 'bg-purple-500/10 border-purple-500 text-purple-400 shadow-lg shadow-purple-500/10' : 'bg-zinc-950 border-zinc-800 text-zinc-550'">
+                        📊
+                    </div>
+                    <span class="text-xs font-bold uppercase tracking-wider mt-4" :class="loadingStep >= 3 ? 'text-purple-400' : 'text-zinc-400'">Tahap 3: SAW Ranking</span>
+                    <span x-show="loadingStep === 3" x-transition class="text-[10px] text-zinc-400 mt-2 block leading-normal">
+                        Normalisasi matriks dan penghitungan preferensi akhir Simple Additive Weighting...
+                    </span>
                 </div>
             </div>
 
-            <!-- Bento Skeleton Blocks -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-6">
-                <div class="border border-zinc-800/80 bg-zinc-950/20 rounded-3xl p-6 space-y-4 animate-pulse md:col-span-2">
-                    <div class="flex justify-between items-center">
-                        <div class="h-6 bg-zinc-800 rounded w-20"></div>
-                        <div class="w-12 h-12 rounded-full bg-zinc-800"></div>
-                    </div>
-                    <div class="h-8 bg-zinc-800 rounded w-3/4"></div>
-                    <div class="h-3 bg-zinc-800 rounded w-20"></div>
-                    <div class="space-y-2">
-                        <div class="h-3 bg-zinc-800 rounded"></div>
-                        <div class="h-3 bg-zinc-800 rounded w-5/6"></div>
-                    </div>
-                </div>
-                <div class="border border-zinc-800/80 bg-zinc-950/20 rounded-3xl p-6 space-y-4 animate-pulse">
-                    <div class="flex justify-between items-center">
-                        <div class="h-6 bg-zinc-800 rounded w-20"></div>
-                        <div class="w-12 h-12 rounded-full bg-zinc-800"></div>
-                    </div>
-                    <div class="h-8 bg-zinc-800 rounded"></div>
-                    <div class="h-3 bg-zinc-800 rounded w-20"></div>
-                    <div class="space-y-2">
-                        <div class="h-3 bg-zinc-800 rounded"></div>
-                        <div class="h-3 bg-zinc-800 rounded w-5/6"></div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="text-center text-xs text-zinc-500 font-bold uppercase tracking-widest pt-4 flex items-center justify-center space-x-2">
-                <svg class="animate-spin h-4 w-4 text-emerald-400" fill="none" viewBox="0 0 24 24">
+            <!-- Loader spinner line -->
+            <div class="text-center text-[10px] text-zinc-500 font-bold uppercase tracking-widest pt-4 flex items-center justify-center space-x-2 border-t border-zinc-800/40">
+                <svg class="animate-spin h-3.5 w-3.5 text-emerald-400" fill="none" viewBox="0 0 24 24">
                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                     <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                 </svg>
-                <span>Mencocokkan Kriteria SAW...</span>
+                <span x-text="loadingStep === 1 ? 'Menjalankan Tahap 1: Filtrasi Kualifikasi...' : (loadingStep === 2 ? 'Menjalankan Tahap 2: Pembobotan Kelayakan...' : 'Menjalankan Tahap 3: Perangkingan SAW...')"></span>
             </div>
         </div>
     </div>
@@ -422,17 +457,26 @@
                                     </span>
                                 </div>
 
-                                <!-- Radial SVG Match Ring -->
+                                <!-- Radial SVG Match Ring / Lock for non-premium -->
                                 <div class="relative w-12 h-12 flex items-center justify-center">
-                                    <svg class="w-full h-full transform -rotate-90">
-                                        <circle cx="24" cy="24" r="20" stroke-width="3" stroke="#1f2937" fill="transparent" />
-                                        <circle cx="24" cy="24" r="20" stroke-width="3" 
-                                            :stroke="rec.peringkat === 1 ? '#10b981' : '#3b82f6'" 
-                                            stroke-dasharray="125.6" 
-                                            :stroke-dashoffset="125.6 - (125.6 * rec.skor_persen / 100)" 
-                                            stroke-linecap="round" fill="transparent" />
-                                    </svg>
-                                    <span class="absolute text-[10px] font-black font-title text-white" x-text="rec.skor_persen + '%'"></span>
+                                    <template x-if="user.is_premium">
+                                        <div class="relative w-full h-full flex items-center justify-center">
+                                            <svg class="w-full h-full transform -rotate-90">
+                                                <circle cx="24" cy="24" r="20" stroke-width="3" stroke="#1f2937" fill="transparent" />
+                                                <circle cx="24" cy="24" r="20" stroke-width="3" 
+                                                    :stroke="rec.peringkat === 1 ? '#10b981' : '#3b82f6'" 
+                                                    stroke-dasharray="125.6" 
+                                                    :stroke-dashoffset="125.6 - (125.6 * rec.skor_persen / 100)" 
+                                                    stroke-linecap="round" fill="transparent" />
+                                            </svg>
+                                            <span class="absolute text-[10px] font-black font-title text-white" x-text="rec.skor_persen + '%'"></span>
+                                        </div>
+                                    </template>
+                                    <template x-if="!user.is_premium">
+                                        <div class="w-10 h-10 rounded-full bg-zinc-950 border border-zinc-800 flex items-center justify-center text-zinc-500 font-bold" title="Upgrade Premium untuk membuka skor relevansi">
+                                            🔒
+                                        </div>
+                                    </template>
                                 </div>
                             </div>
 
@@ -529,81 +573,99 @@
                     <button @click="showMathModal = false" class="text-zinc-500 hover:text-zinc-300 text-xl font-bold">&times;</button>
                 </div>
 
-                <div class="space-y-6 text-xs text-zinc-300 leading-relaxed">
-                    <div>
-                        <h4 class="font-semibold text-white mb-2">1. Formula Utama Simple Additive Weighting (SAW)</h4>
-                        <p class="bg-zinc-950 p-4 rounded-xl font-mono text-center text-sm border border-zinc-800 text-emerald-400">
-                            Vi = &Sigma; (Wj &times; rij)
-                        </p>
-                        <p class="mt-2 text-zinc-400">
-                            Dimana <strong>Vi</strong> adalah nilai preferensi akhir alternatif ke-i, <strong>Wj</strong> adalah bobot kriteria ke-j, dan <strong>rij</strong> adalah matriks keputusan ternormalisasi.
-                        </p>
-                    </div>
+                <!-- Math Modal Content with Premium Lock -->
+                <div class="relative min-h-[300px]">
+                    <template x-if="!user.is_premium">
+                        <div class="absolute inset-0 bg-zinc-950/95 backdrop-blur-md z-30 flex flex-col items-center justify-center p-6 text-center rounded-2xl border border-zinc-800">
+                            <div class="w-12 h-12 rounded-full bg-amber-500/10 border border-amber-500/25 flex items-center justify-center text-amber-400 mb-4 animate-bounce">
+                                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
+                            </div>
+                            <h4 class="font-title font-black text-lg text-white mb-2">Akses Terkunci: Normalisasi & Perhitungan SAW</h4>
+                            <p class="text-xs text-zinc-400 max-w-md mb-6 leading-relaxed">
+                                Dapatkan transparansi rumus lengkap, matriks keputusan ternormalisasi ($r_{ij}$), dan perhitungan nilai preferensi ($V_i$) akhir dengan meningkatkan ke akun Premium.
+                            </p>
+                            <a href="{{ route('premium.index') }}" class="px-6 py-2.5 bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-350 hover:to-orange-450 text-zinc-950 font-bold rounded-xl text-xs transition-all hover:scale-105 shadow-lg shadow-amber-500/15">
+                                Upgrade Ke Premium Sekarang
+                            </a>
+                        </div>
+                    </template>
 
-                    <div>
-                        <h4 class="font-semibold text-white mb-2">2. Prosedur Normalisasi (Semua Kriteria = Benefit)</h4>
-                        <p class="bg-zinc-950 p-4 rounded-xl font-mono text-center text-sm border border-zinc-800 text-blue-400">
-                            rij = xij / Max(xij)
-                        </p>
-                        <p class="mt-2 text-zinc-400">
-                            Karena C1 hingga C4 bertipe <strong>Benefit</strong> (semakin besar semakin layak), nilai ternormalisasi didapat dengan membagi nilai kriteria asli ($x_{ij}$) dengan nilai terbesar pada kolom tersebut ($Max(x_{ij})$).
-                        </p>
-                    </div>
+                    <div :class="!user.is_premium ? 'filter blur-md select-none pointer-events-none' : ''" class="space-y-6 text-xs text-zinc-300 leading-relaxed">
+                        <div>
+                            <h4 class="font-semibold text-white mb-2">1. Formula Utama Simple Additive Weighting (SAW)</h4>
+                            <p class="bg-zinc-950 p-4 rounded-xl font-mono text-center text-sm border border-zinc-800 text-emerald-400">
+                                Vi = &Sigma; (Wj &times; rij)
+                            </p>
+                            <p class="mt-2 text-zinc-400">
+                                Dimana <strong>Vi</strong> adalah nilai preferensi akhir alternatif ke-i, <strong>Wj</strong> adalah bobot kriteria ke-j, dan <strong>rij</strong> adalah matriks keputusan ternormalisasi.
+                            </p>
+                        </div>
 
-                    <!-- Matriks Keputusan Asli -->
-                    <div class="overflow-x-auto rounded-xl border border-zinc-800/80 bg-zinc-950/40 p-4">
-                        <h4 class="text-xs text-zinc-500 font-bold uppercase tracking-wider mb-2">3. Matriks Keputusan Asli ($x_{ij}$)</h4>
-                        <table class="w-full text-left border-collapse text-xs text-zinc-300">
-                            <thead>
-                                <tr class="border-b border-zinc-800 text-zinc-500 font-bold">
-                                    <th class="py-2">Alternatif Beasiswa</th>
-                                    <th class="py-2 text-center">C1 (Rentang Sem)</th>
-                                    <th class="py-2 text-center">C2 (Skor Status)</th>
-                                    <th class="py-2 text-center">C3 (Skor IPK)</th>
-                                    <th class="py-2 text-center">C4 (Skor Pendap.)</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <template x-for="rec in allRecommendations" :key="'modal-raw-' + rec.scholarship.id">
-                                    <tr class="border-b border-zinc-800/30">
-                                        <td class="py-2 font-semibold text-zinc-200" x-text="rec.scholarship.nama_beasiswa.split(':')[0]"></td>
-                                        <td class="py-2 text-center" x-text="rec.raw_values.C1"></td>
-                                        <td class="py-2 text-center" x-text="rec.raw_values.C2"></td>
-                                        <td class="py-2 text-center" x-text="rec.raw_values.C3"></td>
-                                        <td class="py-2 text-center" x-text="rec.raw_values.C4"></td>
+                        <div>
+                            <h4 class="font-semibold text-white mb-2">2. Prosedur Normalisasi (Semua Kriteria = Benefit)</h4>
+                            <p class="bg-zinc-950 p-4 rounded-xl font-mono text-center text-sm border border-zinc-800 text-blue-400">
+                                rij = xij / Max(xij)
+                            </p>
+                            <p class="mt-2 text-zinc-400">
+                                Karena C1 hingga C4 bertipe <strong>Benefit</strong> (semakin besar semakin layak), nilai ternormalisasi didapat dengan membagi nilai kriteria asli ($x_{ij}$) dengan nilai terbesar pada kolom tersebut ($Max(x_{ij})$).
+                            </p>
+                        </div>
+
+                        <!-- Matriks Keputusan Asli -->
+                        <div class="overflow-x-auto rounded-xl border border-zinc-800/80 bg-zinc-950/40 p-4">
+                            <h4 class="text-xs text-zinc-500 font-bold uppercase tracking-wider mb-2">3. Matriks Keputusan Asli ($x_{ij}$)</h4>
+                            <table class="w-full text-left border-collapse text-xs text-zinc-300">
+                                <thead>
+                                    <tr class="border-b border-zinc-800 text-zinc-500 font-bold">
+                                        <th class="py-2">Alternatif Beasiswa</th>
+                                        <th class="py-2 text-center">C1 (Rentang Sem)</th>
+                                        <th class="py-2 text-center">C2 (Skor Status)</th>
+                                        <th class="py-2 text-center">C3 (Skor IPK)</th>
+                                        <th class="py-2 text-center">C4 (Skor Pendap.)</th>
                                     </tr>
-                                </template>
-                            </tbody>
-                        </table>
-                    </div>
+                                </thead>
+                                <tbody>
+                                    <template x-for="rec in allRecommendations" :key="'modal-raw-' + rec.scholarship.id">
+                                        <tr class="border-b border-zinc-800/30">
+                                            <td class="py-2 font-semibold text-zinc-200" x-text="rec.scholarship.nama_beasiswa.split(':')[0]"></td>
+                                            <td class="py-2 text-center" x-text="rec.raw_values.C1"></td>
+                                            <td class="py-2 text-center" x-text="rec.raw_values.C2"></td>
+                                            <td class="py-2 text-center" x-text="rec.raw_values.C3"></td>
+                                            <td class="py-2 text-center" x-text="rec.raw_values.C4"></td>
+                                        </tr>
+                                    </template>
+                                </tbody>
+                            </table>
+                        </div>
 
-                    <!-- Matriks Ternormalisasi -->
-                    <div class="overflow-x-auto rounded-xl border border-zinc-800/80 bg-zinc-950/40 p-4">
-                        <h4 class="text-xs text-zinc-500 font-bold uppercase tracking-wider mb-2">4. Matriks Ternormalisasi ($r_{ij}$) & Nilai Preferensi ($V_i$)</h4>
-                        <table class="w-full text-left border-collapse text-xs text-zinc-300">
-                            <thead>
-                                <tr class="border-b border-zinc-800 text-zinc-500 font-bold">
-                                    <th class="py-2">Alternatif</th>
-                                    <th class="py-2 text-center">C1 (W: 0.25)</th>
-                                    <th class="py-2 text-center">C2 (W: 0.20)</th>
-                                    <th class="py-2 text-center">C3 (W: 0.30)</th>
-                                    <th class="py-2 text-center">C4 (W: 0.25)</th>
-                                    <th class="py-2 text-right">Skor Akhir ($V_i$)</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <template x-for="rec in allRecommendations" :key="'modal-norm-' + rec.scholarship.id">
-                                    <tr class="border-b border-zinc-800/30">
-                                        <td class="py-2 font-semibold text-zinc-200" x-text="rec.scholarship.nama_beasiswa.split(':')[0]"></td>
-                                        <td class="py-2 text-center" x-text="parseFloat(rec.normalized_values.C1).toFixed(3)"></td>
-                                        <td class="py-2 text-center" x-text="parseFloat(rec.normalized_values.C2).toFixed(3)"></td>
-                                        <td class="py-2 text-center" x-text="parseFloat(rec.normalized_values.C3).toFixed(3)"></td>
-                                        <td class="py-2 text-center" x-text="parseFloat(rec.normalized_values.C4).toFixed(3)"></td>
-                                        <td class="py-2 text-right font-bold text-emerald-400 font-title" x-text="parseFloat(rec.nilai_preferensi).toFixed(4)"></td>
+                        <!-- Matriks Ternormalisasi -->
+                        <div class="overflow-x-auto rounded-xl border border-zinc-800/80 bg-zinc-950/40 p-4">
+                            <h4 class="text-xs text-zinc-500 font-bold uppercase tracking-wider mb-2">4. Matriks Ternormalisasi ($r_{ij}$) & Nilai Preferensi ($V_i$)</h4>
+                            <table class="w-full text-left border-collapse text-xs text-zinc-300">
+                                <thead>
+                                    <tr class="border-b border-zinc-800 text-zinc-500 font-bold">
+                                        <th class="py-2">Alternatif</th>
+                                        <th class="py-2 text-center">C1 (W: 0.25)</th>
+                                        <th class="py-2 text-center">C2 (W: 0.20)</th>
+                                        <th class="py-2 text-center">C3 (W: 0.30)</th>
+                                        <th class="py-2 text-center">C4 (W: 0.25)</th>
+                                        <th class="py-2 text-right">Skor Akhir ($V_i$)</th>
                                     </tr>
-                                </template>
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody>
+                                    <template x-for="rec in allRecommendations" :key="'modal-norm-' + rec.scholarship.id">
+                                        <tr class="border-b border-zinc-800/30">
+                                            <td class="py-2 font-semibold text-zinc-200" x-text="rec.scholarship.nama_beasiswa.split(':')[0]"></td>
+                                            <td class="py-2 text-center" x-text="parseFloat(rec.normalized_values.C1).toFixed(3)"></td>
+                                            <td class="py-2 text-center" x-text="parseFloat(rec.normalized_values.C2).toFixed(3)"></td>
+                                            <td class="py-2 text-center" x-text="parseFloat(rec.normalized_values.C3).toFixed(3)"></td>
+                                            <td class="py-2 text-center" x-text="parseFloat(rec.normalized_values.C4).toFixed(3)"></td>
+                                            <td class="py-2 text-right font-bold text-emerald-400 font-title" x-text="parseFloat(rec.nilai_preferensi).toFixed(4)"></td>
+                                        </tr>
+                                    </template>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
 

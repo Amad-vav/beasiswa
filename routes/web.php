@@ -15,7 +15,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/', [ScholarshipController::class, 'index'])->name('dashboard');
     Route::post('/calculate', [ScholarshipController::class, 'calculate'])->name('matchmaking.calculate');
     Route::post('/scholarship/{id}/go', [ScholarshipController::class, 'trackClick'])->name('matchmaking.track-click');
-    Route::get('/scholarships', [ScholarshipController::class, 'catalog'])->middleware('premium')->name('scholarships.catalog');
+    Route::get('/scholarships', [ScholarshipController::class, 'catalog'])->name('scholarships.catalog');
     Route::get('/premium', [ScholarshipController::class, 'premium'])->name('premium.index');
     Route::post('/premium/upgrade', [ScholarshipController::class, 'upgradePremium'])->name('premium.upgrade');
 

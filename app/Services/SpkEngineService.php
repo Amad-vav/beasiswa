@@ -46,10 +46,10 @@ class SpkEngineService
             // Filter Penghasilan: Penghasilan Orang Tua <= Batas Maksimum Penghasilan Beasiswa
             $penghasilanOk = $user->penghasilan_ortu <= $scholarship->batas_penghasilan;
 
-            // Filter Batas Waktu: Batas waktu pendaftaran belum terlampaui
+            // Filter Batas Waktu: Batas waktu pendaftaran belum terlampaui (deadline < today dikecualikan)
             $waktuOk = true;
             if ($scholarship->batas_waktu) {
-                $waktuOk = $scholarship->batas_waktu->isFuture();
+                $waktuOk = !$scholarship->batas_waktu->lt(\Carbon\Carbon::today());
             }
 
             return $ipkOk && $penghasilanOk && $waktuOk;
