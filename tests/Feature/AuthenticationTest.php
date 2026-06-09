@@ -181,11 +181,30 @@ class AuthenticationTest extends TestCase
             'ipk' => 3.45,
             'status_akademik' => 'Aktif Regular',
             'penghasilan_ortu' => 3000000,
+            'is_premium' => true,
         ]);
 
         $response = $this->actingAs($user)->get('/scholarships?search=KIP');
         $response->assertStatus(200);
         $response->assertSee('Katalog Alternatif');
+    }
+
+    public function test_non_premium_user_cannot_access_scholarships_catalog()
+    {
+        $user = User::create([
+            'nama_lengkap' => 'Andi Pratama',
+            'email' => 'andi@example.com',
+            'password' => Hash::make('password123'),
+            'semester' => 5,
+            'ipk' => 3.45,
+            'status_akademik' => 'Aktif Regular',
+            'penghasilan_ortu' => 3000000,
+            'is_premium' => false,
+        ]);
+
+        $response = $this->actingAs($user)->get('/scholarships');
+        $response->assertRedirect('/premium');
+        $response->assertSessionHas('error');
     }
 
     public function test_user_can_access_premium_plan_page()
